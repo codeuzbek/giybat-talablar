@@ -73,28 +73,35 @@
     2. Registration Confirm. Email yoki Phone ni tastiqlash; (agar emil orqali confirm uchun alohida, phone orqali confrm qilish uchun alohida api bo'lishi kerak)
             Request: logikadan kelib chiqgan holda.
             Response: {name,username,roleList, jwt, photo{id,url}}
+    3. Registration Verification Resend. Ro'yxatdan o'tishni tastiqlash kodini qayta jonatish. (SMS kelmay qolgan holatda ishlatiladi)
+                Request:  { name, username, password}
+                Response: OK status
     3. Authorization (Login)
             Request: {username, password}       // username bu yoki phone yoki email.
             Response: {name,username,roleList, jwt, photo{id,url}}
-    4. ResetPassword
+    4. ResetPassword (Passwordni qayta tiklash)
             Request: {username}    // username bu yoki phone yoki email.
             Response: logikadan kelib chiqgan holda.
-    5. ResetPasswordConfirm
+    5. ResetPasswordConfirm (Passwordni qayta tiklashni tastiqlash)
             Request: {username, confirmCode, password}    // password - new password
             Response: logikadan kelib chiqgan holda.
 
 2. Attach
-    1. Image upload api (USER,ADMIN)
-    2. Open Image api (ANY)
+    1. Image upload api (USER,ADMIN) (Attach-ni jo'natish/yuklash)
+    2. Open Image api (ANY) (Attach-ni ochish/ko'rish)
 
 3. Post - G'iybat.
     1. Create. G'iybat yaratish (USER)
             Request: {title, content, photo{id}}
             Response: {id, title, content, photo{id,url}, createdDate}
     2. Profile post list (USER, ADMIN)   (murojat qilgan profile-ning yaratgan postlarini return qiladi)
+                (with pagination/paginatsiya bilan birga qilish kerak)
             Request:
                 Param:  page,size (url param da keladi)
-            Response: {id, title, content, photo{id,url}, createdDate}
+            Response: [
+                        {id, title, content, photo{id,url}, createdDate},
+                        ...
+                      ]
     3. Post by id  (USER, ADMIN)   (id bo'yicha post-ni return qiladi)
             Request:
                 PathVariable:  id ( url-da keladi.)
@@ -112,14 +119,27 @@
             Request:
                 Param: id
             Response: status OK
-    5. Filter. (search + pagination) (ANY)
+    5. Public Filter. (search + pagination) (ANY)
             Request:
                 Param: page, size
                 Body: {query}
             Response: [
                         {id, title, content (first 150 char), photo{id, url}, createdDate, profile (id, name,photoUrl)},
                       ]
-
+   5. Similar Post List. (Berilgan Post-dan tashqari o'xshash postlarni 3tasini return qiladi) (ANY)
+            Request:
+                Param: page, size
+                Body: {query}
+            Response: [
+                      {id, title, content (first 150 char), photo{id, url}, createdDate, profile (id, name,photoUrl)},
+                     ]
+    7.  Filter. (search + pagination) (ADMIN)
+           Request:
+                Param: page, size
+                Body: {query}
+           Response: [
+                      {id, title, content (first 150 char), photo{id, url}, createdDate, profile (id, name,photoUrl)},
+                     ]
 3. Profile
     1. Get Detail. (Murojaat qilgan profile-ni ma'lumotlarini return qiladi.) (USER,ADMIN)
             Response: {name,username,roleList, photo{id,url}}
@@ -135,19 +155,24 @@
     5. Update username (phone yoki email-ni update qilish)  (Murojaat qilgan profile-ni username-ni o'zgartirish.) (USER,ADMIN) (USER,ADMIN)
             Request: {username}
             Response: MessageResponse
-    5. Update username confirm (phone yoki email-ni update qilish)  (Murojaat qilgan profile-ni username-ni o'zgartirish.) (USER,ADMIN) (USER,ADMIN)
+    6. Update username confirm (phone yoki email-ni update qilish)  (Murojaat qilgan profile-ni username-ni o'zgartirish.) (USER,ADMIN) (USER,ADMIN)
             Request: {code}
             Response: MessageResponse
-    5. Filter with Pagination. (ADMIN)
+    7. Filter with Pagination. (Profile-larni list-nini return qiladi) (ADMIN)
             Request:
                 Param: page, size
                 Body: {query}
-            Response: {id, name, username, photo{id,url}, postCount}
-    6. Updating Profile Status: (ADMIN)
+            Response: [
+                        {id, name, username, photo{id,url}, postCount}
+                      ]
+    8. Updating Profile Status: (ADMIN)
             Request:
                 Param: id
             Response: Status OK
-
+    9. Delete Profile : (ADMIN)
+            Request:
+               Param: id
+            Response: Status OK
 
 
 ----- Recourses
